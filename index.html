@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <!-- 关键：这行代码让手机浏览器按真实尺寸渲染，字才不会变小 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>河智苑角色性格测试</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent; /* 移除手机端点击高亮阴影 */
+        }
+        
+        /* 天蓝色主题变量 & 补全缺失的基础变量 */
+        :root {
+            --blue: #2E86C1;
+            --blue-dark: #1A6699;
+            --blue-light: #EAF4FB;
+            --blue-mid: #AED6F1;
+            --blue-tag: #1A6699;
+            --green: #2E7D32;
+            --green-light: #E8F5E9;
+            
+            /* 补全原样式缺失的系统变量 */
+            --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --color-text-primary: #2C3E50;
+            --color-text-secondary: #7F8C8D;
+            --color-background-primary: #FFFFFF;
+            --color-background-secondary: #F4F6F7;
+            --color-border-secondary: #BDC3C7;
+            --color-border-tertiary: #EAEDED;
+            --border-radius-lg: 16px;
+        }
+
+        body {
+            background-color: #F8FAFC;
+            font-family: var(--font-sans);
+        }
+
+        #app {
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 1.5rem 1rem;
+            min-height: 100vh;
+        }
+
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        /* 首页样式 */
+        .hero { text-align: center; padding: 2.5rem 0 1.5rem; }
+        .hero-badge { 
+            display: inline-block; 
+            font-size: 12px; 
+            letter-spacing: 0.08em; 
+            color: var(--blue-tag); 
+            background: var(--blue-light); 
+            padding: 4px 14px; 
+            border-radius: 20px; 
+            margin-bottom: 1.5rem; 
+        }
+        .hero h1 { font-size: 26px; font-weight: 600; color: var(--color-text-primary); line-height: 1.4; margin-bottom: .75rem; }
+        .hero-sub { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 1rem; letter-spacing: 0.05em; }
+        .hero p { font-size: 15px; color: var(--color-text-secondary); line-height: 1.7; margin-bottom: 2.5rem; padding: 0 1rem; }
+        .hero-img { 
+            width: 88px; 
+            height: 88px; 
+            border-radius: 50%; 
+            background: var(--blue-light); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            margin: 0 auto 1.5rem; 
+            font-size: 40px; 
+            border: 2px solid var(--blue-mid); 
+        }
+        .start-btn { 
+            background: var(--blue); 
+            color: white; 
+            border: none; 
+            border-radius: 24px; 
+            padding: 14px 50px; 
+            font-size: 16px; 
+            cursor: pointer; 
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(46, 134, 193, 0.2);
+        }
+        .start-btn:hover { background: var(--blue-dark); }
+
+        /* 答题页样式 */
+        .progress-bar { background: var(--color-background-secondary); border-radius: 4px; height: 6px; margin-bottom: 1.25rem; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--blue); border-radius: 4px; transition: width 0.3s ease; width: 0%; }
+        .q-num { font-size: 14px; color: var(--color-text-secondary); margin-bottom: .5rem; font-weight: 500; }
+        .q-text { font-size: 18px; font-weight: 600; color: var(--color-text-primary); line-height: 1.5; margin-bottom: 1.75rem; }
+
+        .options { display: flex; flex-direction: column; gap: 12px; margin-bottom: 1.75rem; }
+        .opt { 
+            border: 1px solid var(--color-border-secondary); 
+            border-radius: var(--border-radius-lg); 
+            padding: 16px; 
+            cursor: pointer; 
+            font-size: 15px; 
+            color: var(--color-text-primary); 
+            text-align: left; 
+            background: var(--color-background-primary); 
+            line-height: 1.4; 
+            transition: all 0.15s; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            gap: 10px;
+            width: 100%;
+        }
+        .opt:hover { border-color: var(--blue); background: var(--blue-light); color: var(--blue-dark); }
+        .opt.selected { border-color: var(--green); background: var(--green-light); color: var(--green); border-width: 1.5px; font-weight: 500; }
+        .opt .check { width: 20px; height: 20px; min-width: 20px; border-radius: 50%; border: 1.5px solid var(--color-border-secondary); display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+        .opt.selected .check { background: var(--green); border-color: var(--green); }
+        .opt.selected .check::after { content: ''; display: block; width: 5px; height: 9px; border: 2px solid white; border-top: none; border-left: none; transform: rotate(45deg) translateY(-1px); }
+
+        .btn-row { display: flex; gap: 12px; }
+        .prev-btn { flex: 0 0 auto; background: var(--color-background-primary); color: var(--color-text-secondary); border: 1px solid var(--color-border-secondary); border-radius: 12px; padding: 13px 20px; font-size: 14px; cursor: pointer; transition: all 0.15s; }
+        .prev-btn:hover { background: var(--color-background-secondary); }
+        .next-btn { flex: 1; background: var(--blue); color: white; border: none; border-radius: 12px; padding: 13px; font-size: 15px; cursor: pointer; font-weight: 500; opacity: 0.3; pointer-events: none; transition: all 0.2s; }
+        .next-btn.enabled { opacity: 1; pointer-events: auto; }
+        .next-btn.enabled:hover { background: var(--blue-dark); }
+
+        /* 结果页样式 */
+        .result-card { background: var(--color-background-primary); border: 1px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.75rem; margin-bottom: 1.25rem; box-shadow: 0 4px 16px rgba(0,0,0,0.02); }
+        .result-tag { font-size: 12px; color: var(--blue-tag); background: var(--blue-light); padding: 4px 14px; border-radius: 20px; display: inline-block; margin-bottom: .75rem; font-weight: 500; }
+        .result-name { font-size: 26px; font-weight: 600; color: var(--color-text-primary); margin-bottom: .25rem; }
+        .result-drama { font-size: 14px; color: var(--color-text-secondary); margin-bottom: 1.25rem; }
+        .result-desc { font-size: 15px; color: var(--color-text-primary); line-height: 1.8; margin-bottom: 1.25rem; text-align: justify; }
+        .trait-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 1rem; }
+        .trait { font-size: 12px; padding: 4px 12px; border-radius: 20px; background: var(--blue-light); color: var(--blue-tag); font-weight: 500; }
+        .match-pct { font-size: 14px; color: var(--color-text-secondary); margin-bottom: .5rem; margin-top: 1.5rem; font-weight: 500; }
+        .pct-bar { background: var(--color-background-secondary); border-radius: 4px; height: 8px; overflow: hidden; }
+        .pct-fill { height: 100%; background: var(--blue); border-radius: 4px; transition: width 0.5s ease; }
+        .tip { font-size: 13px; color: var(--color-text-secondary); text-align: center; margin-top: 1rem; line-height: 1.6; }
+        .retry-btn { width: 100%; background: transparent; color: var(--blue); border: 1.5px solid var(--blue); border-radius: 12px; padding: 13px; font-size: 15px; cursor: pointer; margin-top: 1.5rem; font-weight: 500; transition: all 0.15s; }
+        .retry-btn:hover { background: var(--blue-light); }
+    </style>
+</head>
+<body>
+
+<div id="app">
+  <!-- 首页 -->
+  <div id="home" class="screen active">
+    <div class="hero">
+      <div class="hero-img">🌊</div>
+      <div class="hero-badge">Ha Ji-won Character Test</div>
+      <h1>你和河智苑演过的<br>哪个角色最像？</h1>
+      <div class="hero-sub">Ha Ji-won Character Test</div>
+      <p>通过12道性格测试题，从10个经典角色中找到和你最相似的那一个。</p>
+      <button class="start-btn" onclick="startTest()">开始测试</button>
+    </div>
+  </div>
+
+  <!-- 答题页 -->
+  <div id="quiz" class="screen">
+    <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+    <div class="q-num" id="qnum"></div>
+    <div class="q-text" id="qtext"></div>
+    <div class="options" id="opts"></div>
+    <div class="btn-row">
+      <button class="prev-btn" id="prevbtn" onclick="prevQ()">← 上一题</button>
+      <button class="next-btn" id="nextbtn" onclick="nextQ()">下一题</button>
+    </div>
+  </div>
+
+  <!-- 结果页 -->
+  <div id="result" class="screen">
+    <div class="result-card">
+      <div class="result-tag" id="res-tag"></div>
+      <div class="result-name" id="res-name"></div>
+      <div class="result-drama" id="res-drama"></div>
+      <div class="result-desc" id="res-desc"></div>
+      <div class="trait-list" id="res-traits"></div>
+      <div class="match-pct" id="res-pct-label"></div>
+      <div class="pct-bar"><div class="pct-fill" id="res-pct"></div></div>
+    </div>
+    <div class="tip">每一段人生，都值得被认真书写。</div>
+    <button class="retry-btn" onclick="retry()">重新测试</button>
+  </div>
+</div>
+
+<script>
+const roles = [
+  {name:"李水晶", drama:"《巴厘岛的故事》", tag:"感性治愈型", desc:"你情感细腻、内心温热，擅长用温柔治愈身边的人。即使面对伤痛，你也不会轻易封闭自己，而是用爱去感受世界。就像李水晶，你的存在本身就是一种治愈。", traits:["感情丰富","温柔体贴","治愈他人","重视情感"]},
+  {name:"吉罗琳", drama:"《秘密花园》", tag:"独立行动型", desc:"你独立、直接、行动力强，从不依赖他人，靠自己的双手闯出一片天。不爱拐弯抹角，做事果断，有种酷飒的气场。就像吉罗琳，外表强硬内心真实。", traits:["独立自强","行动力强","直来直去","酷而真实"]},
+  {name:"黄真伊", drama:"《黄真伊》", tag:"自由艺术型", desc:"你有艺术家的灵魂，追求自由与美，不被世俗束缚，活得洒脱率真。就像黄真伊，你敢爱敢恨，把生命活成一首诗，哪怕代价高昂也无怨无悔。", traits:["自由奔放","浪漫感性","不羁个性","艺术气质"]},
+  {name:"奇承娘", drama:"《奇皇后》", tag:"领袖统帅型", desc:"你有超强的大局观和领导力，冷静睿智、目标清晰，面对逆境从不退缩。就像奇承娘，你天生散发气场，能在最复杂的局面中找到出路，是让人信服的存在。", traits:["大局观强","天生领袖","冷静睿智","坚韧不拔"]},
+  {name:"秋尚雅", drama:"《Climax》", tag:"野心战略型", desc:"你有明确的目标和强烈的上支心，善于分析局势、布局谋略。就像秋尚雅，你清楚自己想要什么，并为之全力以赴，是那种让人又敬又怕的存在。", traits:["野心勃勃","战略思维","目标明确","强势高效"]},
+  {name:"金恒儿", drama:"《The King 2 Hearts》", tag:"热血理想型", desc:"你充满热情与正义感，相信理想，愿意为信念付出一切。就像金恒儿，你有一股不服输的热血，勇于挑战权威，是身边人的精神支柱。", traits:["正义热血","理想主义","勇敢无畏","感染力强"]},
+  {name:"宋恩彩", drama:"《医疗船》", tag:"理性专业型", desc:"你冷静、专业、逻辑清晰，在混乱中也能保持秩序感。就像宋恩彩，你用理性守护身边的人，不轻易流露情绪，却在关键时刻成为最可靠的那个人。", traits:["理性冷静","专业严谨","可靠稳重","逻辑清晰"]},
+  {name:"文车英", drama:"《巧克力》", tag:"温暖共情型", desc:"你善良、敏感、共情能力极强，能感受到他人的痛苦并真心去帮助。就像文车英，你用细腻的心去感知世界，把温暖传递给每一个需要的人。", traits:["善良敏感","共情力强","无私奉献","温暖人心"]},
+  {name:"吴荷娜", drama:"《爱你的时间》", tag:"阳光陪伴型", desc:"你开朗、积极，是那种能让周围人都快乐起来的存在。就像吴荷娜，你用阳光和笑容点亮他人的生活，即使自己受伤也不忘给别人带来能量。", traits:["开朗积极","阳光活泼","善于陪伴","感染力强"]},
+  {name:"张彩玉", drama:"《茶母》", tag:"忠诚守护型", desc:"你重情重义、忠诚可靠，一旦认定了就会全力守护。就像张彩玉，你有种古典的侠义精神，把责任与承诺看得比自己更重要，是最值得托付的人。", traits:["重情重义","忠诚可靠","侠义精神","守护型人格"]}
+];
+
+const questions = [
+  {q:"周末有整天自由时间，你最可能？", opts:[{text:"约朋友出去，喜欢热闹",d:8},{text:"一个人看书或看剧",d:6},{text:"去运动或挑战新事物",d:1},{text:"做一件一直想做的计划",d:4}]},
+  {q:"面对不公正的事，你会？", opts:[{text:"直接站出来说不",d:5},{text:"先安抚受伤的人",d:7},{text:"找时机再行动，先观察",d:3},{text:"内心难受但说不出口",d:0}]},
+  {q:"做决定时，你更依赖？", opts:[{text:"直觉与内心感受",d:0},{text:"冷静分析利弊",d:6},{text:"自己的价值观与原则",d:5},{text:"过去的经验判断",d:9}]},
+  {q:"你在团队中通常是？", opts:[{text:"协调者，让大家都舒服",d:7},{text:"执行者，把事做完",d:1},{text:"领导者，指明方向",d:3},{text:"创意者，提出新想法",d:2}]},
+  {q:"遇到喜欢的人，你会？", opts:[{text:"主动出击，直接表白",d:1},{text:"默默付出，用行动表达",d:9},{text:"等对方先靠近",d:0},{text:"若无其事，暗中观察",d:4}]},
+  {q:"别人眼中的你更像？", opts:[{text:"温柔体贴、善解人意",d:7},{text:"独立酷飒、不依赖人",d:1},{text:"热情勇敢、说到做到",d:5},{text:"沉稳睿智、有主见",d:3}]},
+  {q:"面对重大挫折，你的第一反应？", opts:[{text:"找人倾诉，需要陪伴",d:8},{text:"独自消化，不想麻烦人",d:6},{text:"马上想办法，迅速行动",d:4},{text:"冷静复盘，找出根源",d:3}]},
+  {q:"你认为自己最大的优点是？", opts:[{text:"共情能力强，能感受别人的痛",d:7},{text:"自律自强，靠自己",d:1},{text:"勇气和行动力",d:5},{text:"冷静理智，全局眼光",d:3}]},
+  {q:"你的人生信条更接近哪句？", opts:[{text:"爱是一切的答案",d:0},{text:"活在当下，不留遗憾",d:2},{text:"凡事预则立，不预则废",d:4},{text:"脚踏实地，用实力说话",d:6}]},
+  {q:"压力很大时，你会？", opts:[{text:"找闺蜜倾诉，需要被理解",d:0},{text:"独自运动或散步缓解",d:9},{text:"去做一件让自己兴奋的事",d:2},{text:"整理思路，列出解决方案",d:6}]},
+  {q:"你觉得真正的勇敢是？", opts:[{text:"敢于爱，哪怕会受伤",d:0},{text:"为正义站出来，不怕代价",d:5},{text:"默默承担，不让别人担心",d:9},{text:"在逆境中不放弃目标",d:3}]},
+  {q:"如果可以选择一种人生？", opts:[{text:"平凡但充满爱的生活",d:7},{text:"自由独立，做自己喜欢的事",d:2},{text:"跌宕起伏，有故事可讲",d:8},{text:"有成就有地位，被人尊重",d:4}]}
+];
+
+let cur = 0, answers = new Array(questions.length).fill(null);
+
+function startTest(){
+  cur = 0;
+  answers = new Array(questions.length).fill(null);
+  show('quiz');
+  renderQ();
+}
+
+function renderQ(){
+  const q = questions[cur];
+  // 实时更新进度条
+  document.getElementById('prog').style.width = ((cur / questions.length) * 100) + '%';
+  document.getElementById('qnum').textContent = `${cur + 1} / ${questions.length}`;
+  document.getElementById('qtext').textContent = q.q;
+  
+  const box = document.getElementById('opts');
+  box.innerHTML = '';
+  q.opts.forEach((o, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt' + (answers[cur] === i ? ' selected' : '');
+    btn.innerHTML = `<span>${o.text}</span><span class="check"></span>`;
+    btn.onclick = () => selectOpt(i);
+    box.appendChild(btn);
+  });
+  
+  const nb = document.getElementById('nextbtn');
+  nb.textContent = cur < questions.length - 1 ? '下一题' : '查看结果';
+  answers[cur] !== null ? nb.classList.add('enabled') : nb.classList.remove('enabled');
+  document.getElementById('prevbtn').style.visibility = cur === 0 ? 'hidden' : 'visible';
+}
+
+function selectOpt(i){
+  answers[cur] = i;
+  document.querySelectorAll('.opt').forEach((b, idx) => b.classList.toggle('selected', idx === i));
+  document.getElementById('nextbtn').classList.add('enabled');
+  
+  // 为了手机端体验，选完后可以自动稍微延迟跳转下一题（可选，这里保留手动点击）
+}
+
+function nextQ(){
+  if(answers[cur] === null) return;
+  cur++;
+  if(cur < questions.length){
+    renderQ();
+    return;
+  }
+  showResult();
+}
+
+function prevQ(){
+  if(cur === 0) return;
+  cur--;
+  renderQ();
+}
+
+function showResult(){
+  const scores = new Array(10).fill(0);
+  answers.forEach((a, qi) => {
+    if(a !== null) scores[questions[qi].opts[a].d]++;
+  });
+  
+  let max = -1, idx = 0;
+  scores.forEach((s, i) => {
+    if(s > max){ max = s; idx = i; }
+  });
+  
+  const role = roles[idx];
+  const pct = Math.round((max / questions.length) * 100);
+  
+  document.getElementById('res-tag').textContent = role.tag;
+  document.getElementById('res-name').textContent = role.name;
+  document.getElementById('res-drama').textContent = role.drama;
+  document.getElementById('res-desc').textContent = role.desc;
+  document.getElementById('res-pct-label').textContent = `匹配度 ${pct}%`;
+  document.getElementById('res-pct').style.width = pct + '%';
+  document.getElementById('res-traits').innerHTML = role.traits.map(t => `<span class="trait">${t}</span>`).join('');
+  
+  show('result');
+}
+
+function retry(){
+  cur = 0;
+  answers = new Array(questions.length).fill(null);
+  document.getElementById('prog').style.width = '0%'; // 重置进度条
+  show('home');
+}
+
+function show(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0); /* 切换页面时手机端自动回到顶部 */
+}
+</script>
+</body>
+</html>
